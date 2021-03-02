@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Encryption Schemas with Zip Manipulation Demo</title>
+    <script type="text/javascript" src="/static/js/js.utils.js"></script>
+    <script type="text/javascript" src="/static/js/FileSaver/FileSaver.min.js"></script>
+    <script type="text/javascript" src="/static/js/u64.js"></script>
+    <script type="text/javascript" src="/static/js/encryptA.js"></script>
+  </head>
+  <body>
+    <input type="file" id="f" />
+
+    <fieldset style="width:600px;">
+      <legend>Zip info:</legend>
+      <div id="info"></div>
+    </fieldset>
+
+    <fieldset style="width:600px;">
+      <legend>One-time key for decryption:</legend>
+      <div id="key"></div>
+    </fieldset>
+
+<script type="module">
+  import { analyseZip, modifyZip } from "./static/js/za.js";
+
+  window.onload = async function() {
+    let fileInput = document.querySelector('#f'),
+        result = document.querySelector('#result');
+  
+    fileInput.addEventListener('change', async function(e) {
+        const f = this.files[0];
+        const data = await file2Ui8(f);
+        const zipInfo = await analyseZip(data);
+  
+        eulog.log(zipInfo);
+        document.getElementById("info").innerText = JSON.stringify(zipInfo);
+
+        if ("error" in zipInfo) {
+           alert(zipInfo.error); 
+
+        } else {
+
+          /*
+          Useful entry info:
+          ------------------
+          directory: false
+          filename: "Takeout/Location History/Location History.json.anon"
+          compressedSize: 56869573
+          uncompressedSize: 908230232
+          ...
+          */
+          const options = { 
+            "filters": [ 
+                 //entry => entry.filename.endsWith(".anon"),    // leave only ".anon" files from the original
+               ], 
+            "commands": [ 
+                 //entry => (entry.directory || !entry.filename.endsWith(".anon")) ?  // and remove that ".anon" extension
+                 //          entry.filename : 
+                 //          entry.filename.slice(0, -".anon".length)
+               ], 
+          };
+
+          let tmp = await modifyZip(data, zipInfo, options);
+
+          const {iv, key} = await generateIvKey(uuidv4(), "", f.name);
+          const keyRaw = await exportKey('raw', key);
+          const keyA = Array.from(new Uint8Array(keyRaw));
+          document.getElementById("key").innerText = keyA;
+
+          const encryptedAsAb = await encrypt(key, iv, tmp);
+          saveAs(new Blob([encryptedAsAb]), f.name + ".trimmed.locked");
+        }
+    });  
+};
+</script>
+
+  </body>
+</html>
