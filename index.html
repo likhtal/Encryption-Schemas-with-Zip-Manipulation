@@ -24,52 +24,59 @@
   import { analyseZip, modifyZip } from "./static/js/za.js";
 
   window.onload = async function() {
-    let fileInput = document.querySelector('#f'),
-        result = document.querySelector('#result');
+    let fileInput = document.querySelector('#f');
   
     fileInput.addEventListener('change', async function(e) {
+        document.getElementById("info").innerText = '';
+        document.getElementById("key").innerText = '';
+
         const f = this.files[0];
         const data = await file2Ui8(f);
-        const zipInfo = await analyseZip(data);
-  
-        eulog.log(zipInfo);
-        document.getElementById("info").innerText = JSON.stringify(zipInfo);
+        let mf = data;
 
-        if ("error" in zipInfo) {
-           alert(zipInfo.error); 
-
-        } else {
-
-          /*
-          Useful entry info:
-          ------------------
-          directory: false
-          filename: "Takeout/Location History/Location History.json.anon"
-          compressedSize: 56869573
-          uncompressedSize: 908230232
-          ...
-          */
-          const options = { 
-            "filters": [ 
-                 //entry => entry.filename.endsWith(".anon"),    // leave only ".anon" files from the original
-               ], 
-            "commands": [ 
-                 //entry => (entry.directory || !entry.filename.endsWith(".anon")) ?  // and remove that ".anon" extension
-                 //          entry.filename : 
-                 //          entry.filename.slice(0, -".anon".length)
-               ], 
-          };
-
-          let tmp = await modifyZip(data, zipInfo, options);
-
-          const {iv, key} = await generateIvKey(uuidv4(), "", f.name);
-          const keyRaw = await exportKey('raw', key);
-          const keyA = Array.from(new Uint8Array(keyRaw));
-          document.getElementById("key").innerText = keyA;
-
-          const encryptedAsAb = await encrypt(key, iv, tmp);
-          saveAs(new Blob([encryptedAsAb]), f.name + ".trimmed.locked");
+        if (!!f && !!f.name && f.name.toLowerCase().endsWith('.zip')) {
+           const zipInfo = await analyseZip(data);
+           
+           eulog.log(zipInfo);
+           document.getElementById("info").innerText = JSON.stringify(zipInfo);
+           
+           if ("error" in zipInfo) {
+              alert(zipInfo.error); 
+           
+           } else {
+           
+             /*
+             Useful entry info:
+             ------------------
+             directory: false
+             filename: "Takeout/Location History/Location History.json.anon"
+             compressedSize: 56869573
+             uncompressedSize: 908230232
+             ...
+             */
+             const options = { 
+               "filters": [ 
+                    //entry => entry.filename.endsWith(".anon"),    // leave only ".anon" files from the original
+                  ], 
+               "commands": [ 
+                    //entry => (entry.directory || !entry.filename.endsWith(".anon")) ?  // and remove that ".anon" extension
+                    //          entry.filename : 
+                    //          entry.filename.slice(0, -".anon".length)
+                  ], 
+             };
+           
+             mf = await modifyZip(data, zipInfo, options);
+          }
         }
+
+        const {iv, key} = await generateIvKey(uuidv4(), "", f.name);
+        const keyRaw = await exportKey('raw', key);
+        const keyA = Array.from(new Uint8Array(keyRaw));
+        document.getElementById("key").innerText = keyA;
+        saveAs(new Blob([qstr2ab(keyA.join(','))]), f.name + ".key");
+
+        const encryptedAsAb = await encrypt(key, iv, mf);
+        saveAs(new Blob([encryptedAsAb]), f.name + ".locked");
     });  
 };
 </script>
