@@ -10,19 +10,19 @@ Key can be reproducible if you enter a non-empty passphrase. Otherwise, the key 
 
 Schema # 1:
 
-You use a passphrase. A reproducible key is derived from it and the file name. You can share encrypted fiel with whoever, and share the key with trusted parties only.
-The key is not easy to lose, since it's reproducible (well, assuming that the passphrase is memorable.) Briefly, the passphrase owner is the boss. And losing
-your passphrase if you don't keep the keys may become a problem. The passphrase being stolen may become another problem.
+You use a passphrase. A reproducible key is derived from the passphrase and the file name. You can share encrypted file with whoever, and share the key with trusted parties only.
+The key is not easy to lose, since it's reproducible (well, assuming that the passphrase is memorable.) In short, the passphrase owner is the boss. Losing
+your passphrase if you don't keep the keys may become a problem. The passphrase having been stolen may become another problem.
 
 Pros: losing keys is not a problem.
 Cons: passphrase may get stolen, and thus reveal all of the keys.
 
 Schema # 2:
 
-You don't use a passphrase. The key is totally random, and must be saved immediately (say, as a file). In practice, the key is uploaded to a certain place,
-very different from the place to where the encrypted file goes. In this way, the secret is split. Once again, anybody can have the file, but only trusted 
+You don't use a passphrase. The key is totally random, and must be saved immediately (say, to a file). In practice, the key is uploaded to a certain place,
+very different from the place to where the encrypted file goes. So, the secret is split between two locations. Once again, anybody can have the file, but only trusted 
 parties get the key. This schema is more secure in the sense that knowledge of a single key (and there is nothing else to know - there is no passphrase), 
-won't help you with other files, and even with the same file, if it was encrypted again. You need to have both proper vesion of the encrypted file and 
+won't help you with other files, and even with the same file if it was encrypted again. You need to have both: proper version of the encrypted file and 
 the proper key to decrypt. So, don't lose your keys.
 
 Pros: no passphrase, nothing to steal.
