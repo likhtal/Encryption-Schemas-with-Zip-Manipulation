@@ -99,7 +99,6 @@ output
 **/*.jpeg
 **/*.jpg
 **/*.exe
-**/*.zip
 **/*.pkl
 **/*.h5
 **/*.kml

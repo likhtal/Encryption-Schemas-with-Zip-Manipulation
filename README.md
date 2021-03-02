@@ -13,6 +13,6 @@ To run:
 - python3 server3.py
 - go to localhost:8091 in your browser.
 
-/*![Example](example.png)*/
+![Example](example.png)
 
  

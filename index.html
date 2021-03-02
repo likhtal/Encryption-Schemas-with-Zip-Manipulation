@@ -1,34 +1,146 @@
 <!doctype html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Encryption Schemas with Zip Manipulation Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta itemprop="name" content="Encryption Schemas with Zip Manipulation">
+    <meta itemprop="description" content="Encryption Schemas with Zip Manipulation">
+    <meta name="description" content="Encryption Schemas with Zip Manipulation">
+    <meta name="keywords" content="">
+    <title>Encryption Schemas with Zip Manipulation</title>
+
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="/static/css/encryption_schemas.css" rel="stylesheet" id="encryption-schemas-css">
+    <link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <script type="text/javascript" src="/static/js/js.utils.js"></script>
     <script type="text/javascript" src="/static/js/FileSaver/FileSaver.min.js"></script>
     <script type="text/javascript" src="/static/js/u64.js"></script>
     <script type="text/javascript" src="/static/js/encryptA.js"></script>
   </head>
   <body>
-    <input type="file" id="f" />
+    <div class="container">
+      <div id="loginbox" style="margin-top:50px;" class="mainbox col-lg-8 col-lg-offset-2"> 
+        <div class="logo">
+          <div class="panel-title">
+             <span class="lobster-sm">Encrypt a File, Save the Encrypted File and the Key</span>
+             <span id="settings" style="display:none;">
+                <button id="btnAdd">
+                  <img src="/static/img/settings-32.png" title="Add to Home Page">
+                </button>
+             </span> 
+          </div>
+        </div>
+        <div class="panel panel-info" >
+          <div class="panel-heading" style="text-align: center;margin: 0 auto;">
+          </div>
+          <div style="padding-top:30px;padding-bottom:0;" class="panel-body" id="form-panel">
+            <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+            <div style="display:none" id="login-success" class="alert alert-success col-sm-12"></div>
+            <form id="contents" class="form-horizontal" role="form" style="">
+              <div class="contents-page contents-uploads" style="">
+                <div style="margin-top:10px" class="form-group">
+                  <div id="uploading-controls" style="">
+                    
+                    <div class="col-sm-12 controls">
+                        <label id="for-passphrase" for="passphrase" class="" style="width:100%;display:inline;" >
+                        <input type="text" name="passphrase" id="passphrase" class="input" style="width:80%" 
+                               placeholder="Enter your passphrase here or leave it blank for a random key generation.">
+                        <div>
+                        You can use this passphrase to generate reproducible encryption key for the uploaded file.
+                        Otherwise, the key is created at random and it changes every time.
+                        </div>
+                      </label> 
+                      <!--
+                      <label id="for-file-qr-selector" for="file-qr-selector" style="float:right;">
+                          <input type="file" id="file-qr-selector" style="display:none;"><img src="/static/img/qrcode-32.png" id="get-from-qrcode">
+                      </label>
+                      -->
+                    </div>
+                   <!--
+                   <div class="col-sm-12 controls">
+                        <label id="for-passphrase-hint" for="passphrase-hint" class="" style="width:100%">
+                          <input type="text" name="passphrase-hint" id="passphrase-hint" class="input" style="width:80%"> 
+                          Passphrase Hint
+                        </label> 
+                   </div>
+                   -->
+                   <div class="col-sm-12 controls" style="text-align:center;">
+                     <input id="clear-passphrase" type="button" class="btn btn-primary" style="width:100%;margin-top:23px;" value="Clear Passphrase">
+                     <!-- <input id="save-passphrase" type="button" class="btn btn-primary" style="width:100%;margin-top:23px;" value="Save Passphrase"> -->
+                   </div>
 
-    <fieldset style="width:600px;">
-      <legend>Zip info:</legend>
-      <div id="info"></div>
-    </fieldset>
+                    <div class="col-sm-12 controls"><hr /></div>
 
-    <fieldset style="width:600px;">
-      <legend>One-time key for decryption:</legend>
+                    <div class="col-sm-12 controls" style="text-align:center;">
+                      <label id="for-f" for="f" class="btn btn-primary">
+                      <input type="file" name="f" id="f" class="btn input" 
+                        style="display:none;" /> 
+                         Select File
+                      </label> 
+                    </div>
+
+                    <div class="col-sm-12 controls"><hr /></div>
+
+<div class="col-sm-12 controls">
+    <fieldset style="width:600px;" id="fkey" class="display-none">
+      <legend>Key for Decryption:</legend>
       <div id="key"></div>
     </fieldset>
+</div>
+
+<div class="col-sm-12 controls">
+    <fieldset style="width:600px;" id="fzipinfo" class="display-none">
+      <legend>Zip Info:</legend>
+      <div id="info"></div>
+    </fieldset>
+</div>
+
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 <script type="module">
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js').catch(function(e) {
+      eulog.log("Error:", e);
+      // handleFailure("", e.?);
+    });
+  } else {
+      eulog.log("No service worker");
+  }
+
   import { analyseZip, modifyZip } from "./static/js/za.js";
 
   window.onload = async function() {
+    let clearPassPhrase = document.querySelector('#clear-passphrase');
+    let passPhrase = document.querySelector('#passphrase');
+
+    clearPassPhrase.addEventListener('click', async function(e) {
+       passPhrase.value = '';
+    });
+
     let fileInput = document.querySelector('#f');
   
     fileInput.addEventListener('change', async function(e) {
-        document.getElementById("info").innerText = '';
-        document.getElementById("key").innerText = '';
+        document.querySelector('#fkey').className = 'display-none';
+        document.querySelector('#fzipinfo').className = 'display-none';
+        document.querySelector('#info').innerText = '';
+        document.querySelector('#key').innerText = '';
 
         const f = this.files[0];
         const data = await file2Ui8(f);
@@ -37,8 +149,8 @@
         if (!!f && !!f.name && f.name.toLowerCase().endsWith('.zip')) {
            const zipInfo = await analyseZip(data);
            
-           eulog.log(zipInfo);
-           document.getElementById("info").innerText = JSON.stringify(zipInfo);
+           document.querySelector('#info').innerText = JSON.stringify(zipInfo);
+           document.querySelector('#fzipinfo').className = '';
            
            if ("error" in zipInfo) {
               alert(zipInfo.error); 
@@ -69,16 +181,49 @@
           }
         }
 
-        const {iv, key} = await generateIvKey(uuidv4(), "", f.name);
+        const phrase = passPhrase.value || uuidv4();
+        const {iv, key} = await generateIvKey(phrase, "", f.name);
         const keyRaw = await exportKey('raw', key);
         const keyA = Array.from(new Uint8Array(keyRaw));
-        document.getElementById("key").innerText = keyA;
+
+        document.querySelector('#key').innerText = keyA;
+        document.querySelector('#fkey').className = '';
+
         saveAs(new Blob([qstr2ab(keyA.join(','))]), f.name + ".key");
 
         const encryptedAsAb = await encrypt(key, iv, mf);
         saveAs(new Blob([encryptedAsAb]), f.name + ".locked");
     });  
 };
+
+  let deferredPrompt;
+  let btnAdd = document.getElementById("btnAdd");
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI notify the user they can add to home screen
+    console.log(deferredPrompt);
+    $("#settings").show();
+  });
+
+  btnAdd.addEventListener('click', (e) => {
+    // hide our user interface that shows our A2HS button
+    btnAdd.style.display = 'none';
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice
+      .then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+  });
+
 </script>
 
   </body>
